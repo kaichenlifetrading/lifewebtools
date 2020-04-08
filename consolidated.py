@@ -20,9 +20,7 @@ class Consolidated:
         self.orderbook_cols = ['exchange_time_str', 'sequence_number', 'message_types',
                                'bid_price_1', 'bid_quantity_1', 'ask_price_1', 'ask_quantity_1',
                                'mid_price', 'mid_price_delta', 'book_imbalance', 'tick_change_index', 'tick_change_1',
-                               'tick_change_2', 'tick_change_3', 'tick_change_4', 'tick_change_5',
-                               'tick_change_time_1', 'tick_change_time_2', 'tick_change_time_3',
-                               'tick_change_time_4', 'tick_change_time_5']
+                               'tick_change_2', 'tick_change_time_1', 'tick_change_time_2']
         self.trade_cols = ['exchange_timestamp', 'sequence_number', 'symbol_net_delta', 'symbol_total_buy',
                            'symbol_total_sell', 'symbol_total', 'symbol_trade_imbalance', 'vwap_buy',
                            'vwap_sell', 'vwap', 'group_net_delta', 'group_total_buy', 'group_total_sell',

@@ -35,11 +35,11 @@ class OrderbookHistory(Download):
         for single_symbol in self.symbol_list:
             symbol_df = df.loc[(df.symbol == single_symbol) & (df.state.isin(['LAST', 'OPEN']))]
             symbol_df['book_imbalance'] = (symbol_df.bid_quantity_1 - symbol_df.ask_quantity_1) / (
-                        symbol_df.bid_quantity_1 + symbol_df.ask_quantity_1)
+                    symbol_df.bid_quantity_1 + symbol_df.ask_quantity_1)
             symbol_df['mid_price'] = ((symbol_df.ask_price_1 * symbol_df.bid_quantity_1) / (
-                        symbol_df.bid_quantity_1 + symbol_df.ask_quantity_1)) + (
-                                                 (symbol_df.bid_price_1 * symbol_df.ask_quantity_1) / (
-                                                     symbol_df.bid_quantity_1 + symbol_df.ask_quantity_1))
+                    symbol_df.bid_quantity_1 + symbol_df.ask_quantity_1)) + (
+                                             (symbol_df.bid_price_1 * symbol_df.ask_quantity_1) / (
+                                             symbol_df.bid_quantity_1 + symbol_df.ask_quantity_1))
             symbol_df['mid_price_delta'] = -1 * symbol_df.mid_price.diff(-1)
             symbol_df.mid_price_delta = symbol_df.mid_price_delta.shift(1)
             symbol_df['tick_change_1'] = (symbol_df.mid_price.round(2) * -100).apply(np.floor).diff(-1)
@@ -68,7 +68,7 @@ class OrderbookHistory(Download):
         df['tick_change_index'] = df.sequence_number.map(tick_index_dict['tick_change_index'])
 
         data = []
-        for single_symbol in df.symbol.unique():
+        for single_symbol in self.symbol_list:
             symbol_tick_change = tick_change.loc[tick_change.symbol == single_symbol]
             for x in range(2, 6):
                 symbol_tick_change['tick_change_' + str(x)] = symbol_tick_change.tick_change_1.shift(-(x - 1))
@@ -82,3 +82,18 @@ class OrderbookHistory(Download):
 
         df = df.loc[df.state != 'LAST']
         return df
+
+    def price_resample(self, symbol, interval):
+        last_tail = self.last_df.loc[self.last_df.symbol == symbol].tail(1)
+        df = self.df.loc[self.df.symbol == symbol]
+        first_head = self.next_df.loc[self.next_df.symbol == symbol].head(1)
+        combined = pd.concat([last_tail, df, first_head])
+
+        combined['mid_price'] = ((combined.ask_price_1 * combined.bid_quantity_1) / (
+                combined.bid_quantity_1 + combined.ask_quantity_1)) + (
+                                        (combined.bid_price_1 * combined.ask_quantity_1) / (
+                                        combined.bid_quantity_1 + combined.ask_quantity_1))
+        combined = combined[['exchange_time_str', 'symbol', 'mid_price']]
+        combined.set_index('exchange_time_str', inplace=True)
+        resample = combined.resample(interval).last().ffill()
+        return resample

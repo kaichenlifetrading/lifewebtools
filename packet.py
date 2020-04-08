@@ -12,6 +12,15 @@ class Packet(Download):
 
         self.df = self.get_packet(group_id)
 
+    def reduce_raw_coloumns(self):
+        self.df = self.df[['net_timestamp', 'frame_number', 'sequence_number', 'net_timestamp_ns',
+                           'exchange_timestamp', 'exchange_timestamp_ns', 'message_type',
+                           'timestamp', 'trade_date', 'instrument_id', 'session_state', 'side',
+                           'order_id', 'quantity_remaining', 'trade_type', 'trade_id',
+                           'executed_quantity', 'trade_price', 'opposite_order_id',
+                           'order_book_priority', 'quantity', 'price', 'combination_trade_id',
+                           'counter_party_id', 'opposite_instrument_id', 'opposite_side', 'symbol', 'group_id']]
+
     def amend_orders(self):
         amend_order_ids = self.df.order_id.loc[self.df.message_type == 'X']
         amend = self.df.loc[
@@ -87,6 +96,7 @@ class Packet(Download):
         self.df.sort_values(['exchange_timestamp', 'sequence_number'], inplace=True)
 
     def packet_attributes(self):
+        self.reduce_raw_coloumns()
         self.amend_orders()
         self.delete_orders()
         self.implied_amend_orders()
