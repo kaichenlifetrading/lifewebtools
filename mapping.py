@@ -4,11 +4,12 @@ import datetime
 class Mapping:
     def __init__(self):
         self.compression_type = 'zip'
-        self.address = {'main_address': '/home/trader/notes/Kai/LifewebTools/database/',
-                        'packet_address': '/home/trader/notes/Kai/LifewebTools/database/packet/',
-                        'fill_address': '/home/trader/notes/Kai/LifewebTools/database/fill/',
-                        'price_address': '/home/trader/notes/Kai/LifewebTools/database/price/',
-                        'group_price_address': '/home/trader/notes/Kai/LifewebTools/database/group_price/'}
+        self.main_directory = '/home/trader/notes/Kai/LifewebDatabase/database/'
+        self.address = {'main_address': self.main_directory,
+                        'packet_address': '{}/packet/'.format(self.main_directory),
+                        'fill_address': '{}/fill/'.format(self.main_directory),
+                        'price_address': '{}/price/'.format(self.main_directory),
+                        'group_price_address': '{}/group_price/'.format(self.main_directory)}
         self.fill_functions = {'position': '_position',
                                'raw_quantity': '_raw_quantity',
                                'adj_quantity': '_adj_quantity',

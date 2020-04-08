@@ -64,7 +64,7 @@ class Download(Database):
     def get_packet(self, group_id):
         pd.options.mode.chained_assignment = None
         filename = self.generate_filename('packet', self.exchange, self.trade_date.strftime("%Y-%m-%d"),
-                                                self.session, group_id=group_id)
+                                          self.session, group_id=group_id)
         if (self.check_file(self.address['packet_address'], filename)) & (self.trade_date <= self.lastbday):
             df = self.load_pickle(self.address['packet_address'], filename)
         else:
@@ -94,7 +94,7 @@ class Download(Database):
     def get_orderbook_history(self, symbol):
         pd.options.mode.chained_assignment = None
         filename = self.generate_filename('price', self.exchange, self.trade_date.strftime("%Y-%m-%d"),
-                                                self.session, symbol=symbol)
+                                          self.session, symbol=symbol)
         if self.check_file(self.address['price_address'], filename) & (self.trade_date <= self.lastbday):
             df = self.load_pickle(self.address['price_address'], filename)
         else:
@@ -117,8 +117,8 @@ class Download(Database):
     def get_orderbook_history_group(self, group_id):
         pd.options.mode.chained_assignment = None
         filename = self.generate_filename('group_price', self.exchange,
-                                                self.trade_date.strftime("%Y-%m-%d"),
-                                                self.session, group_id=group_id)
+                                          self.trade_date.strftime("%Y-%m-%d"),
+                                          self.session, group_id=group_id)
         if self.check_file(self.address['group_price_address'], filename) & (
                 self.trade_date <= self.lastbday):
             df = self.load_pickle(self.address['group_price_address'], filename)
@@ -139,7 +139,7 @@ class Download(Database):
     def get_fill(self, book):
         pd.options.mode.chained_assignment = None
         filename = self.generate_filename('fill', self.exchange, self.trade_date.strftime("%Y-%m-%d"),
-                                                self.session, book=book)
+                                          self.session, book=book)
         if self.check_file(self.address['fill_address'], filename) & (self.trade_date <= self.lastbday):
             df = self.load_pickle(self.address['fill_address'], filename)
         else:
@@ -189,6 +189,11 @@ class Download(Database):
         print("Successful pulling data for:{} on trade date:{} - sequence_number: {}".format(symbol, self.trade_date,
                                                                                              sequence_number))
         return df
+
+
+class Update(Download):
+    def __init__(self):
+        super().__init__()
 
     @staticmethod
     def update_database(start_date, end_date, exchange_list, session_list, group_list, book_list):
